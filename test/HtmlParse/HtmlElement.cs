@@ -6,21 +6,21 @@ namespace tucao
 {
 
     class HtmlElement
-    {
-        HtmlParse hp;
+    { 
+        string html;
         public HtmlElement(string html)
         {
-            hp = new HtmlParse(html);
+            this.html = html;
         }
         public override string ToString()
         {
-            return hp.ToString();
+            return html;
         }
 
         public string innerHTML
         {
             get {
-                return new Regex("^<.+?>([\\S\\s]+)</.+?>$", RegexOptions.Multiline).Match(outerHTML).Groups[1].Value;
+                return new Regex("^<[^>]+?>([\\S\\s]+)</[^>]+?>$", RegexOptions.Multiline).Match(outerHTML).Groups[1].Value;
             }
         }
         public string innerText
@@ -32,12 +32,8 @@ namespace tucao
         }
         public string outerHTML
         {
-            get { return hp.ToString(); }
-        }
-        public string O
-        {
-            get { return hp.ToString(); }
-        }
+            get { return html; }
+        } 
 
         public string getAttribute(string key)
         {
@@ -51,22 +47,21 @@ namespace tucao
             return null;
         }
         public List<HtmlElement> querySelectorAll(string selector, bool first = false)
-        {
-            hp.Position = 0;
+        { 
+            var hp  = new HtmlParse(html);
             var ls = new List<HtmlElement>();
             // #cc .active a[href],body
             foreach (var tag in selector.Split(',')) {
-                qq(" " + selector, hp.Length, first, ls);
+                qq(hp," " + selector, hp.Length, first, ls);
             }
             return ls;
         } 
-        void qq(string selector, int eof, bool first, List<HtmlElement> ls)
+        void qq(HtmlParse hp ,string selector, int eof, bool first, List<HtmlElement> ls)
         {
             char[] flag = new char[] { ' ', '+', '>' };
             var r = selector.IndexOfAny(flag, 1);
             var sel = r == -1 ? selector.Substring(1) : selector.Substring(1, r-1);
-
-
+             
             if (selector[0] == '>') {
                 //>aa dd+ee;
                 var t = -1;
@@ -79,7 +74,7 @@ namespace tucao
                     if (t != 0) 
                         continue;  
                     if (r != -1)
-                        qq(selector.Substring(r), hp.Position + str.Length, first, ls);
+                        qq(hp,selector.Substring(r), hp.Position + str.Length, first, ls);
                     else if (str != "")
                         ls.Add(new HtmlElement(str));
                     if (first && ls.Count != 0)
@@ -95,7 +90,7 @@ namespace tucao
                     if (hp.Position > eof)
                         break; ;
                     if (r != -1)
-                        qq(selector.Substring(r), hp.Position + str.Length, first, ls);
+                        qq(hp,selector.Substring(r), hp.Position + str.Length, first, ls);
                     else if (str != "")
                         ls.Add(new HtmlElement(str));
                     if (first && ls.Count != 0)
@@ -166,14 +161,16 @@ namespace tucao
 
                 if (text[0] == '/') {
                     //</TAG... 
-                    var bug = false;
+                    var bug = "";
                     while (sl.Count != 0 && text.Substring(1) != sl[sl.Count - 1]) {
                         //BUG
                         sl.RemoveAt(sl.Count - 1);
-                        bug = true;
+                        if(sl.Count != 0 )
+                            bug = sl[sl.Count - 1];
                     }
-                    if (start > 0 && bug) {
-                        Position = start;
+                    if (start > 0 && bug!="") {
+                        if (text.Substring(1) != bug)
+                            Position = start;
                         fp('>');
                         break; 
                     }
@@ -218,7 +215,7 @@ namespace tucao
 
             //PROP 
             foreach (Match item in new Regex("\\[(.+)\\]").Matches(sel)) {
-                if (prop.IndexOf(item.Groups[1].Value) == -1)
+                if (prop.Substring(1).IndexOf(item.Groups[1].Value) == -1)
                     return ptag;
             }
             //ID

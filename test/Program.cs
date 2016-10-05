@@ -73,30 +73,10 @@ namespace test
         }
         static void Main(string[] args)
         {
-
-            Task.Run(  () => {
-                var cts = new CancellationTokenSource();
-                cts.CancelAfter(TimeSpan.FromSeconds(1));
-
-
-                var t = Task.Run<int>( async () => {
-                    Console.WriteLine("Start"); 
-                    await Task.Delay(3000);
-                    Console.WriteLine("End");
-                    return 1;
-                } , cts.Token);
-
-
-                Task.Run(async () => {
-                    await Task.Delay(1000);
-                    cts.Cancel(); 
-
-                });
-            });
-
-
-
-
+            var doc = HtmlDocument.FormUrl("http://www.lagou.com/center/job_2366110.html");
+             
+            var d = doc.querySelectorAll("meta");
+            Console.WriteLine(d);
 
             //dd();
             /* 

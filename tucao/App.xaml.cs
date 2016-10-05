@@ -43,8 +43,7 @@ namespace tucao
                 if (frame.CanGoBack) {
                     frame.GoBack();
                     e.Handled = true;//处理已完成 不执行默认行为
-                }
-
+                } 
             };
         }
 
