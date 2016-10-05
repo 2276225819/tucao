@@ -27,7 +27,7 @@ namespace tucao
         {
             get
             {
-                return new Regex("<[\\S\\s]+?>|\\s+").Replace(innerHTML, " ");
+                return new Regex("<[\\S\\s]+?>|\\s+|&nbsp;").Replace(innerHTML, " ").Trim();
             }
         }
         public string outerHTML
