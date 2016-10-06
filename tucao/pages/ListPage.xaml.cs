@@ -24,12 +24,12 @@ namespace tucao
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class SearchPage : Page
+    public sealed partial class ListPage : Page
     {
-        public SearchPage()
+        public ListPage()
         {
             this.InitializeComponent();
-            this.NavigationCacheMode = NavigationCacheMode.Required;
+            this.NavigationCacheMode = NavigationCacheMode.Enabled;
         }
 
         /// <summary>
@@ -37,48 +37,45 @@ namespace tucao
         /// </summary>
         /// <param name="e">描述如何访问此页的事件数据。
         /// 此参数通常用于配置页。</param>
-        protected async override void OnNavigatedTo(NavigationEventArgs e)
-        { 
-            await Task.Delay(1000);
-
-            if (LIST.Items.Count == 0)
-                TEXT.Focus(FocusState.Keyboard);  
-        }
-
-
-        string key = "";
-        int page = 0;
-
-        private void TextBox_KeyUp(object sender, KeyRoutedEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if(e.Key== Windows.System.VirtualKey.Enter) {
-                var obj = sender as TextBox;
-                this.key =obj.Text;
-                this.page = 1;
-                data.Clear();
-                search();
-            } 
+            if (e.NavigationMode == NavigationMode.Back)
+                return;
+
+            List<string> v = e.Parameter as List<string>;
+            this.key = int.Parse(v[0]);
+            this.TITLE.Text = v[1];
+            this.page = 1;
+            this.data.Clear();
+            this.search();
         }
 
 
+        public int key;
+        public int page;
         List<ITEMS> data = new List<ITEMS>(); 
+        class ITEMS
+        {
+            public string Image { get; set; }
+            public string Name { get; set; }
+            public string Value { get; set; }
 
+        }
         async void search()
         {
-            PROGRESS.Visibility = Visibility.Visible;
-
-            var url = "http://www.tucao.tv/index.php?m=search&c=index&a=init2&catid=&order=&username=&tag=&q=" + key + "&page=" + page;
+            PROGRESS.Visibility = Visibility.Visible; 
+            var url = "http://www.tucao.tv/list/" + key + "/index_" + page+".html"; 
             var doc = await HtmlDocument.FormUrlAsync(url);
-            var list = doc.querySelectorAll("div.search_list div.list");
+            var list = doc.querySelectorAll("div.list li");
 
             if (list.Count == 0)
                 return;
-             
-            foreach (HtmlElement item in list) { 
+
+            foreach (HtmlElement item in list) {
                 data.Add(new ITEMS() {
-                    Image = item.querySelector(".pic img").getAttribute("src"),
-                    Name = item.querySelector(".info a.blue").innerText,
-                    Value = item.querySelector(".info a.blue").getAttribute("href"),
+                    Image = item.querySelector("img")?.getAttribute("src"),
+                    Name = item.querySelector("a.title")?.innerText,
+                    Value = item.querySelector("a.title")?.getAttribute("href"),
                 });
             }
             LIST.ItemsSource = null;
@@ -89,13 +86,22 @@ namespace tucao
 
             PROGRESS.Visibility = Visibility.Collapsed;
         }
-        class ITEMS
-        {
-            public string Image { get; set; }
-            public string Name { get; set; }
-            public string Value { get; set; }
 
-        } 
+
+
+        private void Grid_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var obj = sender as FrameworkElement;
+            var d = Regex.Match(obj.Tag.ToString(), "h\\d+").Value;
+            Debug.WriteLine(d);
+            if (d == "") {
+                new MessageDialog(obj.Tag?.ToString(), "Error").ShowAsync().GetResults();
+                return;
+            }
+            Frame.Navigate(typeof(InfoPage), d);
+
+        }
+
         private void ScrollViewer_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             var s = sender as ScrollViewer;
@@ -105,17 +111,6 @@ namespace tucao
                 return;
 
             search();
-        }
-         
-        private void Grid_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            var obj = sender as FrameworkElement;
-            var d = Regex.Match(obj.Tag.ToString(), "h\\d+").Value;
-            if (d == "") {
-                new MessageDialog(obj.Tag?.ToString(), "Error").ShowAsync().GetResults(); 
-                return;
-            }
-            Frame.Navigate(typeof(InfoPage), d); 
 
         }
     }

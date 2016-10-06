@@ -17,7 +17,8 @@ using MediaParsers.FlvParser;
 using Windows.Storage.FileProperties;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text; 
+using System.Text;
+using System.Text.RegularExpressions;
 
 // “空白页”项模板在 http://go.microsoft.com/fwlink/?LinkId=391641 上有介绍
 
@@ -29,11 +30,10 @@ namespace tucao
     public sealed partial class MainPage : Page
     {
         public MainPage()
-        {
-
-            this.InitializeComponent();
-
+        { 
+            this.InitializeComponent(); 
             this.NavigationCacheMode = NavigationCacheMode.Required;
+            this.data();
         }
 
         /// <summary>
@@ -50,8 +50,8 @@ namespace tucao
             // Windows.Phone.UI.Input.HardwareButtons.BackPressed 事件。
             // 如果使用由某些模板提供的 NavigationHelper，
             // 则系统会为您处理该事件。
-
-            HID.Text = "h4065708";/**/
+            /*
+            HID.Text = "h4065708";
             //DD.Source = new Uri("ms-appx:///Assets/test2.mp4");
             DD.BufferingProgressChanged += (ss, ee) => {
                 //Debug.WriteLine("==BufferingProgressChanged" + DD.BufferingProgress);
@@ -71,16 +71,76 @@ namespace tucao
             DD.MediaEnded += (ss, ee) => {
                 Debug.WriteLine("==MediaEnded" + DD.DownloadProgress);
             };
-
+            */
 
 
 
             //DD.Source = new Uri("http://gz189cloud.oos-gz.ctyunapi.cn/d12876ca-77ad-4f33-b2ec-b646b313958c?response-content-type=video/mp4&Expires=1475257455&response-content-disposition=attachment%3Bfilename%3D\"02%2B%25E8%25B0%2581%25E6%259D%25A5%25E5%2588%25B6%25E8%25A3%2581.mp4\"&AWSAccessKeyId=fad0e782cd5132563e39&Signature=BcYMuqJFkwgZLcLM2D0jc9g/XKU%3D");
             // 
-            test();
             //Util.Load("",DD); 
 
         }
+
+        public async void data()
+        {
+            /*<!--- 
+    <CompositeTransform TranslateX="-0.3" TranslateY="-0.2" />新番
+    <CompositeTransform TranslateX="-0.3" TranslateY="-1.7" />影剧
+    <CompositeTransform TranslateX="-0.3" TranslateY="-3.2" />3cy
+    <CompositeTransform TranslateX="-0.3" TranslateY="-4.7" />yx
+    <CompositeTransform TranslateX="-0.3" TranslateY="-6.2" />yy
+    <CompositeTransform TranslateX="-0.3" TranslateY="-7.7" />dh
+    <CompositeTransform TranslateX="-0.3" TranslateY="-9.2" />shouye
+--> */
+            Dictionary<string, double> dic = new Dictionary<string, double>();
+            dic.Add("首页", -9.2);dic.Add("动画", -7.7);dic.Add("音乐", -6.2);dic.Add("游戏", -4.7);
+            dic.Add("三次元", -3.2);dic.Add("影剧", -1.7);dic.Add("新番", -0.2);
+            var document = await HtmlDocument.FormUrlAsync("http://www.tucao.tv/contactus/"); 
+            var data = new List<object> { };
+            foreach (HtmlElement item in document.querySelectorAll(".header_nav li")) {
+                var menu = "";
+                var list = new List<object> { };
+                foreach (HtmlElement a in item.querySelectorAll("a")) { 
+                    if (menu == "") {
+                        menu = a.innerHTML;
+                    }else {
+                        list.Add(new {
+                            Name = a.innerHTML,
+                            Url = a.getAttribute("href"),
+                        });
+                    } 
+                }
+                if (list.Count != 0) {
+                    data.Add(new {
+                        IPos = dic[menu],
+                        Menu = menu,
+                        Item = list,
+                    }); 
+                }  
+            } 
+            this.DataContext = new {
+                Data = data ,
+                /* new[] {
+                    new {  Menu="11",Item=new[] {
+                        new {Name="a",Url="aa"},
+                        new {Name="a",Url="aa"},
+                        new {Name="a",Url="aa"},
+                    }   }, 
+                } */
+            };
+            
+
+        } 
+        private void ITEM_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            var obj = sender as TextBlock;
+            var url = (sender as TextBlock).Tag.ToString();
+            Debug.WriteLine(url); 
+            var id = Regex.Match(url, "\\d+").Value;
+            Debug.WriteLine(id);
+            Frame.Navigate(typeof(ListPage), new List<string>() { id, obj.Text });
+        }
+
 
         public void test()
         {
@@ -99,7 +159,7 @@ namespace tucao
             //var url = "http://www.panda.tv/act/bananaow20160909.html";
 
 
-            DD.SetMediaStreamSource(new FlvReader(() => {
+            //DD.SetMediaStreamSource(new FlvReader(() => {
                 //分段加载全部
 
                 /*
@@ -112,13 +172,13 @@ namespace tucao
 
                 /* 
                 //stream.ReadXXXX 同步执行超时 */
-                var stream = new HttpStream("http://api.tucao.tv/api/down/7154311002879580");
+           //     var stream = new HttpStream("http://api.tucao.tv/api/down/7154311002879580");
                 //var stream = new HttpStream("http://api.tucao.tv/api/down/415221901240825");//若叶
                 
 
 
-                return stream;
-            }).CreateSource());
+            //    return stream;
+            //}).CreateSource());
             /*/
             DD.SetMediaStreamSource(createMediaStream(stream));//一次把所有内容加载完毕（卡死了
              /*/
@@ -494,14 +554,16 @@ namespace tucao
 
         }
 
-        private void ListViewItem_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
-        { 
-        }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             Debug.WriteLine("ee");
 
+        }
+
+        private void AppBarButton_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(SearchPage)); 
         }
     }
 

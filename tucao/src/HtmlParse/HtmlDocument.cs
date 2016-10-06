@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Text;
 using System.Threading.Tasks;
 using Windows.Web.Http;
+using Windows.Data;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace tucao
 {
@@ -10,10 +13,18 @@ namespace tucao
         {
             return new HtmlDocument(html);
         }
-        public static HtmlDocument FormUrlAsync(string url)
+
+
+        public static Task<HtmlDocument> FormUrlAsync(string url)
+        {
+            return FormUrlAsync(url, Encoding.UTF8);
+        }
+
+        public static async Task<HtmlDocument> FormUrlAsync(string url, Encoding encode )
         {
             var web = new HttpClient();
-            var html = web.GetStringAsync(new Uri(url)).AsTask().GetAwaiter().GetResult();
+            var buff = await web.GetBufferAsync(new Uri(url));//.AsTask().GetAwaiter().GetResult(); 
+            var html = encode.GetString(buff.ToArray(),0,(int)buff.Length);
             return new HtmlDocument(html);
         }
         protected HtmlDocument(string html) : base(html) {  }

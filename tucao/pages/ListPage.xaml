@@ -1,24 +1,22 @@
 ﻿<Page
-    x:Class="tucao.SearchPage"
+    x:Class="tucao.ListPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:tucao"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"  Background="#FFAB0433">
+    mc:Ignorable="d"
+    Background="#FFAB0433">
 
-    <Grid >
-        <Image Source="ms-appx:///Assets/logobg.png" VerticalAlignment="Top" HorizontalAlignment="Right"  Width="135" Opacity="0.7" Margin="0,-10,0,0" />
-        <Grid VerticalAlignment="Top" Height="73">
-            <TextBox x:Name="TEXT" Margin="10,0" Text="jojo" KeyUp="TextBox_KeyUp" Header="搜索"></TextBox>
-        </Grid>
-        <ScrollViewer Margin="0,80,0,0" ViewChanged="ScrollViewer_ViewChanged">
+    <Grid> 
+        <TextBlock x:Name="TITLE" FontSize="32" Margin="10,0">TITLE</TextBlock> 
+        <ScrollViewer Margin="0,38,0,0" ViewChanged="ScrollViewer_ViewChanged">
             <StackPanel>
                 <ListView x:Name="LIST">
                     <!---<Run>aaa</Run> -->
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" /> 
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                             <Setter Property="Margin" Value="0,10,0,0" />
                         </Style>
                     </ListView.ItemContainerStyle>
@@ -36,7 +34,7 @@
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
-                </ListView> 
+                </ListView>
             </StackPanel>
         </ScrollViewer>
 

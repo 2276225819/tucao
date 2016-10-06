@@ -101,7 +101,7 @@ namespace tucao
                 Task.Run(async () => {
                     try { 
                         while (true) {
-                            if (VideoCache.Count > 256 || AudioCache.Count > 256) {
+                            if (VideoCache.Count > 1024 || AudioCache.Count > 1024) {
                                 await Task.Delay(500);
                                 //Debug.WriteLine("@@@ WAIT:RUNNING:" + VideoCache.Count + "|" + AudioCache.Count + " @@@");
                                 continue;

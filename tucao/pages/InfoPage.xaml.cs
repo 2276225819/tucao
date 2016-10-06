@@ -40,12 +40,12 @@ namespace tucao
         /// </summary>
         /// <param name="e">描述如何访问此页的事件数据。
         /// 此参数通常用于配置页。</param>
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected async override void OnNavigatedTo(NavigationEventArgs e)
         { 
             var vid = e.Parameter.ToString();
             var url = "http://backup.biliplus.com/play/" + vid+"/"; 
-            try { 
-                var doc = HtmlDocument.FormUrlAsync(url);
+            try {
+                var doc = await HtmlDocument.FormUrlAsync(url);
 
                 var title = doc?.querySelector(".videotitle")?.innerHTML;
                 if(title!="") title = Regex.Match(title, "h\\d+...(.+)").Groups[1].Value;
