@@ -1,0 +1,50 @@
+﻿<Page
+    x:Class="tucao.InfoPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:tucao"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="#FFAB0433">
+
+    <Grid>
+        <Image Source="ms-appx:///Assets/logobg.png" VerticalAlignment="Top" HorizontalAlignment="Right"  Width="135" Opacity="0.7" Margin="0,-10,0,0" />
+        <ScrollViewer >
+            <StackPanel>
+
+                <RichTextBlock  FontSize="12" VerticalAlignment="Top" Margin="4,4,140,4">
+                    <Paragraph >
+                        <Run  x:Name="TITLE" >加载中。。。。。</Run>
+                    </Paragraph>
+                </RichTextBlock>
+                <Image x:Name="IMAGE"  Height="0" Stretch="UniformToFill" Margin="0,2,0,0"  />
+ 
+                <ListView x:Name="LIST" >
+                    <!---<Run>aaa</Run> -->
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" /> 
+                            <Setter Property="Margin" Value="0,10,0,0" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Background="#66FF3366" Tapped="TextBlock_Tapped" Tag="{Binding Path=Value}" >
+                                <RichTextBlock FontSize="18" Margin="10,10,10,0" VerticalAlignment="Top" IsTextSelectionEnabled="False" HorizontalAlignment="Left">
+                                    <Paragraph>
+                                        <Run Text="{Binding Path=Name}"></Run>
+                                    </Paragraph>
+                                </RichTextBlock>
+
+                                <TextBlock Text="{Binding Path=Source}" Margin="10,10,10,10" VerticalAlignment="Bottom"></TextBlock>
+                            </StackPanel>
+
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -30,6 +31,13 @@ namespace tucao
         {
             this.InitializeComponent();
             this.NavigationCacheMode = NavigationCacheMode.Required;
+
+           
+            var al = ApplicationData.Current.LocalSettings; 
+            if (al.Values.ContainsKey("auto")) {
+                var data = this.autodata = al.Values["auto"] as List<string>;
+                if (data != null) TEXT.ItemsSource = data; 
+            } 
         }
 
         /// <summary>
@@ -48,11 +56,12 @@ namespace tucao
 
         string key = "";
         int page = 0;
+        List<string> autodata = new List<string>();
 
         private void TextBox_KeyUp(object sender, KeyRoutedEventArgs e)
         {
             if(e.Key== Windows.System.VirtualKey.Enter) {
-                var obj = sender as TextBox;
+                var obj = sender as AutoSuggestBox;
                 this.key =obj.Text;
                 this.page = 1;
                 data.Clear();
@@ -88,6 +97,13 @@ namespace tucao
             LIST.Focus(FocusState.Programmatic); ;
 
             PROGRESS.Visibility = Visibility.Collapsed;
+
+          
+            if(key !=null && !autodata.Contains(key)) {
+                autodata.Add(key);
+                var al = ApplicationData.Current.LocalSettings;
+                al.Values["auto"] = autodata; 
+            } 
         }
         class ITEMS
         {

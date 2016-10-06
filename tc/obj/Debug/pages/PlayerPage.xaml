@@ -1,0 +1,32 @@
+﻿<Page x:ConnectionId='1'
+    x:Class="tucao.PlayerPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:tucao"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"                         >
+
+    <Grid>
+        <!--
+        <StackPanel>
+
+            <Image  Height="80" Source="Assets/test.gif" Width="300"/>
+            <Image  Height="80" Source="Assets/test.png" Width="300"/>
+        </StackPanel>
+-->
+
+        <MediaElement x:Name="MEDIA" AreTransportControlsEnabled="True" />
+        <!--
+        <Grid  VerticalAlignment="Bottom" Height="50">
+            <Slider x:Name="test" Value="{Binding ElementName=PROGRESS,Path=Value}" Maximum="{Binding ElementName=PROGRESS,Path=Maximum}" Margin="0,-55,0,55"></Slider>
+            <Ellipse x:Name="PLAY" Width="40" HorizontalAlignment="Left" Stroke="White" Margin="5" />
+            <Slider x:Name="PROGRESS" Margin="55,2,70,5" />
+            <TextBlock x:Name="TIME" Text="00:00/00:00" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5"  />
+        </Grid>
+-->
+
+    </Grid>
+</Page>
+

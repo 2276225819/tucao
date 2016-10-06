@@ -1,0 +1,48 @@
+﻿<Page
+    x:Class="tucao.SearchPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:tucao"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"  Background="#FFAB0433">
+
+    <Grid > 
+        <Image Source="ms-appx:///Assets/logobg.png" VerticalAlignment="Top" HorizontalAlignment="Right"  Width="135" Opacity="0.7" Margin="0,-10,0,0" />
+        <Grid VerticalAlignment="Top" Height="73">
+            <AutoSuggestBox x:Name="TEXT" Margin="10,0" Text="jojo" KeyUp="TextBox_KeyUp" Header="搜索">  
+            </AutoSuggestBox> 
+        </Grid>
+        <ScrollViewer Margin="0,80,0,0" ViewChanged="ScrollViewer_ViewChanged">
+            <StackPanel>
+                <ListView x:Name="LIST">
+                    <!---<Run>aaa</Run> -->
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" /> 
+                            <Setter Property="Margin" Value="0,10,0,0" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Height="120" Tapped="Grid_Tapped"  Tag="{Binding Path=Value}" Background="#66FF3366">
+                                <Border BorderThickness="1" Width="100" Height="100" HorizontalAlignment="Left" Margin="10,0,0,0" >
+                                    <Image Source="{Binding Path=Image}" Stretch="UniformToFill" />
+                                </Border>
+                                <RichTextBlock FontSize="18" Margin="120,10,10,0" VerticalAlignment="Top" IsTextSelectionEnabled="False">
+                                    <Paragraph>
+                                        <Run Text="{Binding Path=Name}"></Run>
+                                    </Paragraph>
+                                </RichTextBlock>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView> 
+            </StackPanel>
+        </ScrollViewer>
+
+        <Grid Name="PROGRESS" Background="#B2000000" Visibility="Collapsed">
+            <ProgressRing IsActive="True" ></ProgressRing>
+        </Grid>
+    </Grid>
+</Page>

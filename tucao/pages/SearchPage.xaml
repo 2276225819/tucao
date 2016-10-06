@@ -10,7 +10,7 @@
     <Grid >
         <Image Source="ms-appx:///Assets/logobg.png" VerticalAlignment="Top" HorizontalAlignment="Right"  Width="135" Opacity="0.7" Margin="0,-10,0,0" />
         <Grid VerticalAlignment="Top" Height="73">
-            <TextBox x:Name="TEXT" Margin="10,0" Text="jojo" KeyUp="TextBox_KeyUp" Header="搜索"></TextBox>
+            <AutoSuggestBox x:Name="TEXT" Margin="10,0" Text="jojo" KeyUp="TextBox_KeyUp" Header="搜索"></AutoSuggestBox> 
         </Grid>
         <ScrollViewer Margin="0,80,0,0" ViewChanged="ScrollViewer_ViewChanged">
             <StackPanel>
