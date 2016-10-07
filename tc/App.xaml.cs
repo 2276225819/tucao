@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -8,6 +9,7 @@ using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Phone.UI.Input;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -36,13 +38,23 @@ namespace tc
         {
             this.InitializeComponent();
             this.Suspending += this.OnSuspending;
-            HardwareButtons.BackPressed += (s, e) => {
+            HardwareButtons.BackPressed += async (s, e) => {
+                e.Handled = true;//处理已完成 不执行默认行为
                 Frame frame = Window.Current.Content as Frame;
                 if (frame == null)
                     return;
                 if (frame.CanGoBack) {
                     frame.GoBack();
-                    e.Handled = true;//处理已完成 不执行默认行为
+                    return;
+                }
+
+                var msg = new ContentDialog() {
+                    Content = "你确定要退出吗？",
+                    PrimaryButtonText = "确定",
+                    SecondaryButtonText = "取消"
+                };
+                if (await msg.ShowAsync() == ContentDialogResult.Primary) {
+                    App.Current.Exit();
                 }
             };
         }

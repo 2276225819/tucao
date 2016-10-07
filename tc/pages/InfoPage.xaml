@@ -9,11 +9,11 @@
     Background="#FFAB0433">
 
     <Grid>
-        <Image Source="ms-appx:///Assets/logobg.png" VerticalAlignment="Top" HorizontalAlignment="Right"  Width="135" Opacity="0.7" Margin="0,-10,0,0" />
+      
         <ScrollViewer >
             <StackPanel>
 
-                <RichTextBlock  FontSize="12" VerticalAlignment="Top" Margin="4,4,140,4">
+                <RichTextBlock  FontSize="12" VerticalAlignment="Top" Margin="4,4,4,4">
                     <Paragraph >
                         <Run  x:Name="TITLE" >加载中。。。。。</Run>
                     </Paragraph>

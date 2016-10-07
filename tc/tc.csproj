@@ -14,6 +14,8 @@
     <MinimumVisualStudioVersion>12</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{76F1466A-8B6D-4E39-A767-685A06062A39};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <AppxBundlePlatforms>neutral</AppxBundlePlatforms>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -101,26 +103,6 @@
       <DependentUpon>SearchPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="src\Flv2\Extensions.cs" />
-    <Compile Include="src\Flv2\FlvParser\AacAudioData.cs" />
-    <Compile Include="src\Flv2\FlvParser\AACPacketType.cs" />
-    <Compile Include="src\Flv2\FlvParser\AudioData.cs" />
-    <Compile Include="src\Flv2\FlvParser\AVCPacketType.cs" />
-    <Compile Include="src\Flv2\FlvParser\AVCVideoPacket.cs" />
-    <Compile Include="src\Flv2\FlvParser\CodecID.cs" />
-    <Compile Include="src\Flv2\FlvParser\FlvFile.cs" />
-    <Compile Include="src\Flv2\FlvParser\FlvFileBody.cs" />
-    <Compile Include="src\Flv2\FlvParser\FlvHeader.cs" />
-    <Compile Include="src\Flv2\FlvParser\FlvTag.cs" />
-    <Compile Include="src\Flv2\FlvParser\FrameType.cs" />
-    <Compile Include="src\Flv2\FlvParser\SoundFormat.cs" />
-    <Compile Include="src\Flv2\FlvParser\SoundRate.cs" />
-    <Compile Include="src\Flv2\FlvParser\SoundSize.cs" />
-    <Compile Include="src\Flv2\FlvParser\SoundType.cs" />
-    <Compile Include="src\Flv2\FlvParser\TagType.cs" />
-    <Compile Include="src\Flv2\FlvParser\TypeFlags.cs" />
-    <Compile Include="src\Flv2\FlvParser\VideoData.cs" />
-    <Compile Include="src\Flv2\General.cs" />
     <Compile Include="src\Flv\ext.cs" />
     <Compile Include="src\Flv\Flv.cs" />
     <Compile Include="src\Flv\FlvReader.cs" />
@@ -142,6 +124,7 @@
     <Content Include="Assets\Square71x71Logo.scale-240.png" />
     <Content Include="Assets\StoreLogo.scale-240.png" />
     <Content Include="Assets\WideLogo.scale-240.png" />
+    <None Include="Package.StoreAssociation.xml" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

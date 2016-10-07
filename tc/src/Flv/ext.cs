@@ -9,6 +9,8 @@ using Windows.Media.MediaProperties;
 using System.Diagnostics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Storage.Streams;
+using System.Runtime.CompilerServices;
+using Windows.Foundation;
 
 namespace tucao
 {
@@ -140,9 +142,18 @@ namespace tucao
             var bitRate = (uint)m["audiodatarate"].GetNumber();
             if (sampleRate < 10 ) {
                 Debug.WriteLine("AudioDesc ERRORERRORERRORERRORERRORERROR sampleRate: " + sampleRate);
-                sampleRate = bitRate > 120U ? 22050U : 44100U; 
+                if (bitRate > 125U)
+                    sampleRate = 44100U;
+                else if (bitRate > 120U)
+                    sampleRate = 22050U;
+                else
+                    sampleRate = 44100U; 
             }
             AudioEncodingProperties encode = null;
+
+            if (tag == null) {
+                return null;
+            }
             if (tag.Codec == SoundFormat.AAC) {
                 encode = AudioEncodingProperties.CreateAac(sampleRate, channelCount, bitRate);
             }
@@ -292,6 +303,23 @@ namespace tucao
         public static ushort BytesToUInt16BE(byte[] bytes)
         {
             return (ushort)((bytes[0] << 8) | bytes[1]);
+        }
+
+         
+        public static R WaitResult<R,P>(this IAsyncOperationWithProgress<R,P> token,int t) where R:class
+        { 
+            Task.Run(async () => {
+                await Task.Delay(t);
+                if (token.Status == AsyncStatus.Completed)
+                    return;
+                token.Cancel();
+            });
+
+            return Task.Run( async () => {
+                var c =  await token;
+                return c;
+            }).GetAwaiter().GetResult();
+           //  token.AsTask().GetAwaiter().GetResult()  ;//.AsTask().GetAwaiter();
         }
     }
 }

@@ -1,41 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest" xmlns:m3="http://schemas.microsoft.com/appx/2014/manifest" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest">
-
-  <Identity Name="177c380a-8cdd-4074-b2d4-e8b51a0f7c00"
-            Publisher="CN=h"
-            Version="1.0.0.0" />
-
-  <mp:PhoneIdentity PhoneProductId="177c380a-8cdd-4074-b2d4-e8b51a0f7c00" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
-
+  <Identity Name="32788overwriter.tucao" Publisher="CN=D3575B54-03B3-49CB-AF9E-D0212EE6857F" Version="0.0.1.7" />
+  <mp:PhoneIdentity PhoneProductId="567908c5-3fe9-433d-a0bb-37dcd28722c3" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
-    <DisplayName>tc</DisplayName>
-    <PublisherDisplayName>h</PublisherDisplayName>
+    <DisplayName>tucao</DisplayName>
+    <PublisherDisplayName>overwriter</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
-
   <Prerequisites>
     <OSMinVersion>6.3.1</OSMinVersion>
     <OSMaxVersionTested>6.3.1</OSMaxVersionTested>
   </Prerequisites>
-  
   <Resources>
-    <Resource Language="x-generate"/>
+    <Resource Language="x-generate" />
   </Resources>
-
   <Applications>
-    <Application Id="App"
-        Executable="$targetnametoken$.exe"
-        EntryPoint="tc.App">
-        <m3:VisualElements
-            DisplayName="tc"
-            Square150x150Logo="Assets\Logo.png"
-            Square44x44Logo="Assets\SmallLogo.png"
-            Description="tc"
-            ForegroundText="light"
-            BackgroundColor="transparent">
-            <m3:DefaultTile Wide310x150Logo="Assets\WideLogo.png" Square71x71Logo="Assets\Square71x71Logo.png"/>
-            <m3:SplashScreen Image="Assets\SplashScreen.png"/>
-        </m3:VisualElements>
+    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="tc.App">
+      <m3:VisualElements DisplayName="tucao.cc" Square150x150Logo="Assets\Logo.png" Square44x44Logo="Assets\SmallLogo.png" Description="tucao.cc" ForegroundText="light" BackgroundColor="transparent">
+        <m3:DefaultTile Wide310x150Logo="Assets\WideLogo.png" Square71x71Logo="Assets\Square71x71Logo.png">
+        </m3:DefaultTile>
+        <m3:SplashScreen Image="Assets\SplashScreen.png" />
+      </m3:VisualElements>
     </Application>
   </Applications>
   <Capabilities>

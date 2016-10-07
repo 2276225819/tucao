@@ -45,15 +45,15 @@ namespace tucao
             //初始化Size（获取全部内容长度）
             //var buff = WindowsRuntimeBuffer.Create(buffsize);
             using (HttpClient client = new HttpClient()) {
-                var res = client.SendRequestAsync(req, HttpCompletionOption.ResponseHeadersRead).GetAwaiter().GetResult();
-                var istream = res.Content.ReadAsInputStreamAsync().GetAwaiter().GetResult();
+                var res = client.SendRequestAsync(req, HttpCompletionOption.ResponseHeadersRead).WaitResult(3000); 
+                var istream = res.Content.ReadAsInputStreamAsync().WaitResult(3000);  
                 Headers = req.Headers;
                 Method = req.Method;
                 RequestUri = req.RequestUri;
                 Size = (long)res.Content.Headers.ContentLength.Value;
-                Stream = istream.AsStreamForRead(); 
-                 
+                Stream = istream.AsStreamForRead();
                 //规则 不能 边读边写  Stream.Position 
+                client.Dispose();
             }
         }
 
@@ -89,13 +89,7 @@ namespace tucao
                 try {
                     Debug.WriteLine("┌─-------HttpStream.Seek--------");
                     Debug.WriteLine(req.Headers); 
-                    var token = client.SendRequestAsync(req, HttpCompletionOption.ResponseHeadersRead); 
-                    Task.Run(async () => {
-                        await Task.Delay(3000);
-                        token.Cancel();
-                    });  
-                    var res = token.GetAwaiter().GetResult();
-                    //Debug.WriteLine("SIZE：" + res.Content.Headers.ContentLength.Value);
+                    var res = client.SendRequestAsync(req, HttpCompletionOption.ResponseHeadersRead).WaitResult(3000);  
                     Debug.WriteLine("└─-----               --------");
                     Stream = res.Content.ReadAsInputStreamAsync().GetAwaiter().GetResult().AsStreamForRead(); 
                 }

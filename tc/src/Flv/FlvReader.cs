@@ -26,9 +26,10 @@ namespace tucao
             if (Head.Signature != "FLV") {
                 throw new Exception("格式错误:" + Head.Signature);
             }
-            this.readPreviousTag(stream);
-            this.readPreviousTag(stream);
-            this.readPreviousTag(stream);
+            while (FirstAudio == null || FirstVideo == null || MediaData == null)
+                this.readPreviousTag(stream);
+
+
             //加载keyframes
             Task.Run(() => {
                 double nxf = 0;
@@ -39,11 +40,11 @@ namespace tucao
                 if  (obj != null) {
                     times = obj["times"].GetArray().Select((d) => d.GetNumber()).ToList();
                     kfs = obj["filepositions"].GetArray().Select((d) => (long)d.GetNumber()).ToList();
-                    Debug.WriteLine("@ keyframes：ALL");
-                    Debug.WriteLine("@ keyframes：ALL");
+                    Debug.WriteLine("@@@ keyframes：ALL");
+                    Debug.WriteLine("@@@ keyframes：ALL");
                 }
                 else {
-                    Debug.WriteLine("@ keyframes：LOADSTART");
+                    Debug.WriteLine("@@@ keyframes：LOADSTART");
                     while (true) {
                         var PreviousTagSize = stream.ReadUInt32();
                         FlvTag flvTag = FlvTag.createTag(stream);
@@ -59,10 +60,11 @@ namespace tucao
                             }
                         }
                     }
-                    Debug.WriteLine("@ keyframes：LOAdEND");
+                    Debug.WriteLine("@@@ keyframes：LOAdEND");
                 }
             });
-            
+
+             
         }
 
          
@@ -72,64 +74,71 @@ namespace tucao
         List<long> kfs = new List<long>();
         bool Reload(double time)
         {
-            Stream m  = null;
+            Stream m = null;
+            int i = 0;
             try {
-                for (int i = 0; i < times.Count; i++) {
+                for (  i = 0; i < times.Count; i++) {
                     if (times[i] >= time) {
-                        m = this.CreateStream();
-                        //Debug.WriteLine("====Reload:"+i+"=====:" );
-                        Debug.WriteLine(time+"==>  TIMER：" +times[i] + "    KFS:{0}({0:X})",kfs[i]);
+                        m = this.CreateStream(); 
                         m.Position = kfs[i] - 4;
-                        VideoCache.Clear();
-                        AudioCache.Clear();
+                        newFrame = true;
                         break;
                     }
                 }
             }
             catch (Exception e) {
                 m = null;
-                Debug.WriteLine(e); 
-            }  
-            if (m == null)
-                return false;
-            else
-                MainStream = m;
-
+            } 
+            if (m != null) {
+                VideoCache.Clear();
+                AudioCache.Clear();
+                var dm = MainStream;
+                if (dm != null) Task.Run(async () => {
+                    await Task.Delay(1000);
+                    dm.Dispose(); 
+                }); 
+                MainStream = m; ;
+                Debug.WriteLine(time + "==>  TIMER：" + times[i] + "    KFS:{0}({0:X})", kfs[i]);
+            } 
             if (!running) {
                 running = true;
                 Debug.WriteLine("==running:true==");
                 Task.Run(async () => {
-                    try { 
+                    try {
                         while (true) {
                             if (VideoCache.Count > 1024 || AudioCache.Count > 1024) {
                                 await Task.Delay(500);
                                 //Debug.WriteLine("@@@ WAIT:RUNNING:" + VideoCache.Count + "|" + AudioCache.Count + " @@@");
                                 continue;
-                            } 
+                            }/*
+                            if (MainStream != m && MainStream != null) {
+                                m = MainStream;
+                                Debug.WriteLine("==running:update==");
+                            }*/
                             if (!this.readPreviousTag(MainStream))
                                 break;
                         }
                         Debug.WriteLine("==running:false==");
+                        Debug.WriteLine("END:" + MainStream.Position + "/" + MainStream.Length);
                         running = false;
                     }
                     catch (Exception ERR) {
-                        Debug.WriteLine("==running:false==");
-                        running = false; 
+                        Debug.WriteLine("==running:catch==");
+                        running = false;
+                        await Task.Delay(3000);
                         Debug.WriteLine(ERR);
-                        Reload(time+5);
+                        Reload(time );
                         //throw;
                     }
                 });
+
             }
-
-            return true;
-
-           
+            return m != null ;
         }
 
         Stream MainStream = null; 
         Func<Stream> CreateStream;
-        //string url = "";
+        bool newFrame=false; 
 
         public bool readPreviousTag(Stream stream)
         {
@@ -230,33 +239,35 @@ namespace tucao
                 if (req.StreamDescriptor is VideoStreamDescriptor) {
                     var flvTag = await this.ReadVideoTag();
                     if (flvTag != null) {
-                        req.Sample = await flvTag.CreateVideoSample(FirstVideo, true);// vi <= 2);
+                        req.Sample = await flvTag.CreateVideoSample(FirstVideo, newFrame);// vi <= 2); 
+                        newFrame = false;
                     }
                 }
                 if (req.Sample == null)
                     Debug.WriteLine("SampleRequested:NULL");
             }
-            deferal.Complete();
+            
+            deferal.Complete(); 
         }
 
-
-        bool lk = true;
-        public void Starting(MediaStreamSource s, MediaStreamSourceStartingEventArgs e)
+        bool lock1 = false;
+        public async void Starting(MediaStreamSource s, MediaStreamSourceStartingEventArgs e)
         {
+            if (lock1) return;
+            lock1 = true;
             var req = e.Request;
+            var deferal = req.GetDeferral();
             var spos = req.StartPosition;
-            Debug.WriteLine("Starting:" + lk);
-            if ( lk && (spos != null) && spos.Value <= s.Duration) {  
-                if (!Reload(spos.GetValueOrDefault().TotalSeconds)) {
-                    lk = false;
-                    Task.Run(async () => {
-                        await Task.Delay(3000);
-                        lk = true;
-                        Debug.WriteLine("Starting:END\n\n");
-                        req.SetActualStartPosition(spos.GetValueOrDefault());
-                    });
-                }
+            Debug.WriteLine("Starting:START" );
+            if ( (spos != null) && spos.Value <= s.Duration) {
+                await Task.Run( async () => {
+                    var res = Reload(spos.Value.TotalSeconds);
+                    await Task.Delay(1000);
+                    req.SetActualStartPosition(spos.Value);
+                });
             }
+            lock1 = false;
+            deferal.Complete();
         }
         private void Paused(MediaStreamSource sender, object args)
         {
